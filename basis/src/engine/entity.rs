@@ -3,7 +3,7 @@ use std::fmt::Debug;
 use crate::{
     engine::EntitiesPending,
     graphics::{self, glw::Shader},
-    prelude::Object,
+    prelude::{Camerable, Object},
 };
 
 #[derive(Debug)]
@@ -27,6 +27,7 @@ impl PartialEq for Entity {
 }
 
 pub trait EntityLifetime: Debug {
+    fn is<T>(&self) -> bool;
     fn get_object(&mut self) -> Option<&mut Object> {
         None
     }
@@ -34,4 +35,13 @@ pub trait EntityLifetime: Debug {
     fn preupdate(&mut self, _window: &mut graphics::window::Window, _shader: &Shader) {}
     fn update(&mut self, _window: &mut graphics::window::Window) {}
     fn postupdate(&mut self, _window: &mut graphics::window::Window, _shader: &Shader) {}
+}
+
+impl<T> EntityLifetime for T
+where
+    T: Camerable,
+{
+    fn is<U>(&self) -> bool {
+        std::any::TypeId::of::<U>() == std::any::TypeId::of::<T>()
+    }
 }

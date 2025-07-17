@@ -181,6 +181,12 @@ pub fn draw(shader: &glw::Shader, obj: &Object, window_size: (i32, i32)) {
         .get_uniform_location("model")
         .uniform_matrix4fv(&model_mat);
 
+    // shader.bind();
+    // shader
+    //     .get_uniform_location("view")
+    //     .uniform_matrix4fv(&self.get_view_matrix());
+    // shader.unbind();
+
     shader.get_uniform_location("object_texture").uniform1i(0);
 
     obj.draw();

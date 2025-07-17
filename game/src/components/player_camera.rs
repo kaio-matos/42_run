@@ -1,15 +1,14 @@
-use crate::prelude::*;
-use crate::{engine::behaviours::Controllable, graphics};
+use basis::prelude::*;
 
 #[derive(Debug)]
-pub struct DebugCamera {
+pub struct PlayerCamera {
     pub position: Vec3,
     front: Vec3,
     up: Vec3,
     speed: f32,
 }
 
-impl DebugCamera {
+impl PlayerCamera {
     pub fn new(position: Vec3, front: Vec3, up: Vec3, speed: f32) -> Self {
         Self {
             position,
@@ -20,13 +19,13 @@ impl DebugCamera {
     }
 }
 
-impl Camerable for DebugCamera {
+impl Camerable for PlayerCamera {
     fn get_view_matrix(&self) -> Mat4 {
         Mat4::look_at(self.position, self.position + self.front, self.up)
     }
 }
 
-impl Controllable for DebugCamera {
+impl Controllable for PlayerCamera {
     fn get_speed(&self, deltatime: f32) -> f32 {
         self.speed * deltatime
     }
@@ -78,7 +77,7 @@ impl Controllable for DebugCamera {
     fn rotateq(&mut self, _deltatime: f32, _quaternion: Quaternion) {}
 }
 
-impl EntityLifetime for DebugCamera {
+impl EntityLifetime for PlayerCamera {
     fn update(&mut self, window: &mut graphics::window::Window) {
         if window.on_key_hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::empty()) {
             self.move_up(window.deltatime)
@@ -98,5 +97,17 @@ impl EntityLifetime for DebugCamera {
         if window.on_key_hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::Control) {
             self.move_backward(window.deltatime)
         }
+    }
+
+    fn postupdate(
+        &mut self,
+        _window: &mut graphics::window::Window,
+        shader: &graphics::glw::Shader,
+    ) {
+        shader.bind();
+        shader
+            .get_uniform_location("view")
+            .uniform_matrix4fv(&self.get_view_matrix());
+        shader.unbind();
     }
 }
