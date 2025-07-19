@@ -1,13 +1,10 @@
 use std::{ffi::c_void, mem, ptr};
 
 use crate::graphics::{glw, wavefront};
-use crate::math::prelude::*;
+use crate::prelude::*;
 
 #[derive(Debug, Clone)]
 pub struct Object {
-    pub position: Vec3,
-    pub rotation: Quaternion,
-    pub scale: Vec3,
     pub rgb: Vec3,
 
     pub model: wavefront::obj::OBJ,
@@ -19,12 +16,11 @@ pub struct Object {
     cached_indices: Vec<u32>,
 }
 
+impl Component for Object {}
+
 impl Object {
     pub fn new(model: wavefront::obj::OBJ) -> Object {
         let mut object = Object {
-            position: Vec3::default(),
-            rotation: Quaternion::default(),
-            scale: Vec3::default(),
             rgb: Vec3::default(),
 
             model,
@@ -41,18 +37,6 @@ impl Object {
 
     pub fn color(&mut self, new_color: Vec3) {
         self.rgb = new_color;
-    }
-
-    pub fn translate(&mut self, new_pos: Vec3) {
-        self.position = new_pos;
-    }
-
-    pub fn scale(&mut self, scale: Vec3) {
-        self.scale = scale;
-    }
-
-    pub fn center(&self) -> Vec3 {
-        self.cached_center * self.scale // scale by the object's scale
     }
 
     pub fn set_texture(&mut self, texture: (u32, u32, Vec<u8>)) {
@@ -164,5 +148,9 @@ impl Object {
             center = center + Vec3::new(vertice.x, vertice.y, vertice.z);
         }
         self.cached_center = center.scale(1.0 / self.model.vertices.len() as f32);
+    }
+
+    pub fn center(&self) -> Vec3 {
+        self.cached_center
     }
 }

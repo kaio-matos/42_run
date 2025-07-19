@@ -71,6 +71,10 @@ impl Quaternion {
     pub fn normalize(&self) -> Self {
         let magnitude =
             f32::sqrt(self.w * self.w + self.x * self.x + self.y * self.y + self.z * self.z);
+        debug_assert!(
+            magnitude != 0.,
+            "Quaternion::normalize tried to normalize an invalid quaternion"
+        );
         Self {
             w: self.w / magnitude,
             x: self.x / magnitude,

@@ -1,9 +1,7 @@
-use std::collections::HashMap;
+use glfw::{Context, GlfwReceiver, Key, Modifiers, WindowEvent};
 
-use glfw::{Action, Context, GlfwReceiver, Key, Modifiers, WindowEvent};
-
-#[derive(Debug, Hash, Eq, PartialEq)]
-struct KeyEvent {
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+pub struct KeyEvent {
     pub key: Key,
     pub modifiers: Modifiers,
 }
@@ -12,9 +10,7 @@ struct KeyEvent {
 pub struct Window {
     pub glfw: glfw::Glfw,
     pub deltatime: f32,
-    pub events: Vec<WindowEvent>,
 
-    hold_keys: HashMap<KeyEvent, bool>,
     window_handle: glfw::PWindow,
     raw_events: GlfwReceiver<(f64, WindowEvent)>,
     last_frame: f32,
@@ -34,9 +30,7 @@ impl Window {
         Window {
             glfw,
             deltatime: 0.0,
-            events: Vec::default(),
 
-            hold_keys: HashMap::default(),
             window_handle: window,
             raw_events: events,
             last_frame: 0.0,
@@ -62,128 +56,16 @@ impl Window {
         self.window_handle.get_size()
     }
 
-    pub fn update<F>(&mut self, on_event: &mut F)
-    where
-        F: FnMut(&WindowEvent),
-    {
-        self.process_events(on_event);
+    pub fn update(&mut self) -> Vec<WindowEvent> {
+        let events = self.process_events();
         self.glfw.poll_events();
         self.window_handle.swap_buffers();
+        events
     }
 
-    pub fn on_key_release(&mut self, key: glfw::Key, modifiers: glfw::Modifiers) -> bool {
-        let found = self.events.iter().find(|event| {
-            if let WindowEvent::Key(k, _, action, m) = event {
-                if k == &key && m == &modifiers && action == &Action::Release {
-                    return true;
-                }
-            }
-            false
-        });
-        found.is_some()
-    }
-
-    pub fn on_key_press(&mut self, key: glfw::Key, modifiers: glfw::Modifiers) -> bool {
-        let found = self.events.iter().find(|event| {
-            if let WindowEvent::Key(k, _, action, m) = event {
-                if k == &key && m == &modifiers && action == &Action::Press {
-                    return true;
-                }
-            }
-            false
-        });
-        found.is_some()
-    }
-
-    pub fn on_key_hold(&self, key: glfw::Key, modifiers: glfw::Modifiers) -> bool {
-        let is_pressing = self.hold_keys.get(&KeyEvent { key, modifiers });
-
-        match is_pressing {
-            Some(value) => *value,
-            None => false,
-        }
-    }
-
-    fn process_events<F>(&mut self, on_event: &mut F)
-    where
-        F: FnMut(&WindowEvent),
-    {
-        self.events.clear();
-        for (_, event) in glfw::flush_messages(&self.raw_events) {
-            self.events.push(event.clone());
-            if let glfw::WindowEvent::Key(k, _, action, m) = event {
-                let key = KeyEvent {
-                    key: k,
-                    modifiers: m,
-                };
-
-                if action == Action::Press {
-                    self.hold_keys.insert(key, true);
-                } else if action == Action::Release {
-                    // make sure we release all of them, even if the key was pressed by using a
-                    // modifier
-                    self.hold_keys.insert(
-                        KeyEvent {
-                            key: k,
-                            modifiers: Modifiers::empty(),
-                        },
-                        false,
-                    );
-                    self.hold_keys.insert(
-                        KeyEvent {
-                            key: k,
-                            modifiers: Modifiers::Alt,
-                        },
-                        false,
-                    );
-                    self.hold_keys.insert(
-                        KeyEvent {
-                            key: k,
-                            modifiers: Modifiers::Shift,
-                        },
-                        false,
-                    );
-                    self.hold_keys.insert(
-                        KeyEvent {
-                            key: k,
-                            modifiers: Modifiers::Control,
-                        },
-                        false,
-                    );
-                    self.hold_keys.insert(
-                        KeyEvent {
-                            key: k,
-                            modifiers: Modifiers::Super,
-                        },
-                        false,
-                    );
-                    self.hold_keys.insert(
-                        KeyEvent {
-                            key: k,
-                            modifiers: Modifiers::NumLock,
-                        },
-                        false,
-                    );
-                    self.hold_keys.insert(
-                        KeyEvent {
-                            key: k,
-                            modifiers: Modifiers::CapsLock,
-                        },
-                        false,
-                    );
-                    self.hold_keys.insert(key, false);
-                }
-            }
-            on_event(&event);
-            match event {
-                glfw::WindowEvent::FramebufferSize(width, height) => unsafe {
-                    gl::Viewport(0, 0, width, height)
-                },
-                glfw::WindowEvent::Key(Key::Escape, _, glfw::Action::Press, _) => {
-                    self.window_handle.set_should_close(true)
-                }
-                _ => {}
-            }
-        }
+    fn process_events(&mut self) -> Vec<WindowEvent> {
+        glfw::flush_messages(&self.raw_events)
+            .map(|(_, event)| event)
+            .collect::<Vec<WindowEvent>>()
     }
 }

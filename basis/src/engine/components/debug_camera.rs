@@ -1,5 +1,5 @@
+use crate::engine::behaviours::Controllable;
 use crate::prelude::*;
-use crate::{engine::behaviours::Controllable, graphics};
 
 #[derive(Debug)]
 pub struct DebugCamera {
@@ -19,6 +19,8 @@ impl DebugCamera {
         }
     }
 }
+
+impl Component for DebugCamera {}
 
 impl Camerable for DebugCamera {
     fn get_view_matrix(&self) -> Mat4 {
@@ -76,27 +78,4 @@ impl Controllable for DebugCamera {
     }
 
     fn rotateq(&mut self, _deltatime: f32, _quaternion: Quaternion) {}
-}
-
-impl EntityLifetime for DebugCamera {
-    fn update(&mut self, window: &mut graphics::window::Window) {
-        if window.on_key_hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::empty()) {
-            self.move_up(window.deltatime)
-        }
-        if window.on_key_hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::empty()) {
-            self.move_down(window.deltatime)
-        }
-        if window.on_key_hold(graphics::glfw::Key::A, graphics::glfw::Modifiers::empty()) {
-            self.move_left(window.deltatime)
-        }
-        if window.on_key_hold(graphics::glfw::Key::D, graphics::glfw::Modifiers::empty()) {
-            self.move_right(window.deltatime)
-        }
-        if window.on_key_hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::Control) {
-            self.move_forward(window.deltatime)
-        }
-        if window.on_key_hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::Control) {
-            self.move_backward(window.deltatime)
-        }
-    }
 }

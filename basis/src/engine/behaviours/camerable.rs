@@ -1,10 +1,10 @@
 use std::fmt::Debug;
 
-use crate::math::prelude::*;
+use crate::prelude::*;
 
 ///
 /// Camerable are basically entities that may replace the current view matrix used by the shaders
 ///
-pub trait Camerable: Debug {
+pub trait Camerable {
     fn get_view_matrix(&self) -> Mat4;
 }

@@ -7,6 +7,7 @@ edition = "2021"
 gl = "0.14.0"
 glfw = "0.59.0"
 rand = "0.9.1"
+anymap = "0.12.1"
 # entity-derive = { path = "entity-derive" }
 
 [lib]
