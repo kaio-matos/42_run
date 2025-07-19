@@ -95,6 +95,60 @@ impl World {
         storage.get_mut().unwrap().insert(entity, component);
     }
 
+    pub fn add_components_2<A: Component, B: Component>(&mut self, component_a: A, component_b: B) {
+        let entity = self.spawn();
+        self.add_entity_component(entity, component_a);
+        self.add_entity_component(entity, component_b);
+    }
+
+    pub fn add_components_3<A: Component, B: Component, C: Component>(
+        &mut self,
+        component_a: A,
+        component_b: B,
+        component_c: C,
+    ) {
+        let entity = self.spawn();
+        self.add_entity_component(entity, component_a);
+        self.add_entity_component(entity, component_b);
+        self.add_entity_component(entity, component_c);
+    }
+
+    pub fn add_components_4<A: Component, B: Component, C: Component, D: Component>(
+        &mut self,
+        component_a: A,
+        component_b: B,
+        component_c: C,
+        component_d: D,
+    ) {
+        let entity = self.spawn();
+        self.add_entity_component(entity, component_a);
+        self.add_entity_component(entity, component_b);
+        self.add_entity_component(entity, component_c);
+        self.add_entity_component(entity, component_d);
+    }
+
+    pub fn add_components_5<
+        A: Component,
+        B: Component,
+        C: Component,
+        D: Component,
+        E: Component,
+    >(
+        &mut self,
+        component_a: A,
+        component_b: B,
+        component_c: C,
+        component_d: D,
+        component_e: D,
+    ) {
+        let entity = self.spawn();
+        self.add_entity_component(entity, component_a);
+        self.add_entity_component(entity, component_b);
+        self.add_entity_component(entity, component_c);
+        self.add_entity_component(entity, component_d);
+        self.add_entity_component(entity, component_e);
+    }
+
     pub fn add_entity_component<T: Component>(&mut self, entity: Entity, component: T) {
         let storage = self
             .component_storages

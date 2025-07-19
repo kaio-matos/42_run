@@ -19,7 +19,7 @@ impl System for SystemDebugWireframe {
         // debug helper
         //
         let event_handler = resources.get::<EventHandler>();
-        if event_handler.on_key_press(graphics::glfw::Key::E, graphics::glfw::Modifiers::empty()) {
+        if event_handler.pressed(graphics::glfw::Key::E, graphics::glfw::Modifiers::empty()) {
             self.is_wireframe = !self.is_wireframe;
             if self.is_wireframe {
                 glw::polygon_mode(gl::FRONT_AND_BACK, gl::LINE);
@@ -42,34 +42,37 @@ impl System for SystemDebugCamera {
             world.with_components_mut_1::<DebugCamera, _>(entity, |debug_camera| {
                 if let Some(debug_camera) = debug_camera {
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::empty())
+                        .hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::empty())
                     {
                         debug_camera.move_up(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::empty())
+                        .hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::empty())
                     {
                         debug_camera.move_down(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::A, graphics::glfw::Modifiers::empty())
+                        .hold(graphics::glfw::Key::A, graphics::glfw::Modifiers::empty())
                     {
                         debug_camera.move_left(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::D, graphics::glfw::Modifiers::empty())
+                        .hold(graphics::glfw::Key::D, graphics::glfw::Modifiers::empty())
                     {
                         debug_camera.move_right(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::Control)
+                        .hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::Control)
                     {
                         debug_camera.move_forward(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::Control)
+                        .hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::Control)
                     {
                         debug_camera.move_backward(**deltatime)
+                    }
+                    if let Some((x, y)) = event_handler.mouse_move() {
+                        println!("{x} {y}");
                     }
 
                     shader.bind();
@@ -95,32 +98,32 @@ impl System for SystemPlayerCamera {
             world.with_components_mut_1::<PlayerCamera, _>(entity, |player_camera| {
                 if let Some(player_camera) = player_camera {
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::empty())
+                        .hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::empty())
                     {
                         player_camera.move_up(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::empty())
+                        .hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::empty())
                     {
                         player_camera.move_down(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::A, graphics::glfw::Modifiers::empty())
+                        .hold(graphics::glfw::Key::A, graphics::glfw::Modifiers::empty())
                     {
                         player_camera.move_left(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::D, graphics::glfw::Modifiers::empty())
+                        .hold(graphics::glfw::Key::D, graphics::glfw::Modifiers::empty())
                     {
                         player_camera.move_right(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::Control)
+                        .hold(graphics::glfw::Key::W, graphics::glfw::Modifiers::Control)
                     {
                         player_camera.move_forward(**deltatime)
                     }
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::Control)
+                        .hold(graphics::glfw::Key::S, graphics::glfw::Modifiers::Control)
                     {
                         player_camera.move_backward(**deltatime)
                     }
@@ -186,35 +189,35 @@ impl System for SystemCubeMovement {
             world.with_components_mut_2::<Cube, Transform, _>(entity, |cube, transform| {
                 if let (Some(_cube), Some(transform)) = (cube, transform) {
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::Up, graphics::glfw::Modifiers::empty())
+                        .hold(graphics::glfw::Key::Up, graphics::glfw::Modifiers::empty())
                     {
                         transform.move_up(**deltatime)
                     }
-                    if event_handler.on_key_hold(
+                    if event_handler.hold(
                         graphics::glfw::Key::Down,
                         graphics::glfw::Modifiers::empty(),
                     ) {
                         transform.move_down(**deltatime)
                     }
-                    if event_handler.on_key_hold(
+                    if event_handler.hold(
                         graphics::glfw::Key::Left,
                         graphics::glfw::Modifiers::empty(),
                     ) {
                         transform.move_left(**deltatime)
                     }
-                    if event_handler.on_key_hold(
+                    if event_handler.hold(
                         graphics::glfw::Key::Right,
                         graphics::glfw::Modifiers::empty(),
                     ) {
                         transform.move_right(**deltatime)
                     }
-                    if event_handler.on_key_hold(
+                    if event_handler.hold(
                         graphics::glfw::Key::PageUp,
                         graphics::glfw::Modifiers::empty(),
                     ) {
                         transform.move_forward(**deltatime)
                     }
-                    if event_handler.on_key_hold(
+                    if event_handler.hold(
                         graphics::glfw::Key::PageDown,
                         graphics::glfw::Modifiers::empty(),
                     ) {
@@ -222,7 +225,7 @@ impl System for SystemCubeMovement {
                     }
 
                     if event_handler
-                        .on_key_hold(graphics::glfw::Key::Up, graphics::glfw::Modifiers::Control)
+                        .hold(graphics::glfw::Key::Up, graphics::glfw::Modifiers::Control)
                     {
                         transform.rotateq(
                             **deltatime,
@@ -233,7 +236,7 @@ impl System for SystemCubeMovement {
                         );
                     }
 
-                    if event_handler.on_key_hold(
+                    if event_handler.hold(
                         graphics::glfw::Key::Down,
                         graphics::glfw::Modifiers::Control,
                     ) {
@@ -245,7 +248,7 @@ impl System for SystemCubeMovement {
                             ),
                         );
                     }
-                    if event_handler.on_key_hold(
+                    if event_handler.hold(
                         graphics::glfw::Key::Left,
                         graphics::glfw::Modifiers::Control,
                     ) {
@@ -257,7 +260,7 @@ impl System for SystemCubeMovement {
                             ),
                         );
                     }
-                    if event_handler.on_key_hold(
+                    if event_handler.hold(
                         graphics::glfw::Key::Right,
                         graphics::glfw::Modifiers::Control,
                     ) {

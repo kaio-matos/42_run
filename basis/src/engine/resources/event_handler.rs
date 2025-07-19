@@ -98,7 +98,16 @@ impl EventHandler {
         }
     }
 
-    pub fn on_key_hold(&self, key: glfw::Key, modifiers: glfw::Modifiers) -> bool {
+    pub fn mouse_move(&self) -> Option<(f64, f64)> {
+        for event in self.events.iter() {
+            if let glfw::WindowEvent::CursorPos(x, y) = event {
+                return Some((*x, *y));
+            }
+        }
+        None
+    }
+
+    pub fn hold(&self, key: glfw::Key, modifiers: glfw::Modifiers) -> bool {
         let is_pressing = self.hold_keys.get(&KeyEvent { key, modifiers });
 
         match is_pressing {
@@ -106,7 +115,8 @@ impl EventHandler {
             None => false,
         }
     }
-    pub fn on_key_release(&self, key: glfw::Key, modifiers: glfw::Modifiers) -> bool {
+
+    pub fn released(&self, key: glfw::Key, modifiers: glfw::Modifiers) -> bool {
         let found = self.events.iter().find(|event| {
             if let glfw::WindowEvent::Key(k, _, action, m) = event {
                 if k == &key && m == &modifiers && action == &glfw::Action::Release {
@@ -118,7 +128,7 @@ impl EventHandler {
         found.is_some()
     }
 
-    pub fn on_key_press(&self, key: glfw::Key, modifiers: glfw::Modifiers) -> bool {
+    pub fn pressed(&self, key: glfw::Key, modifiers: glfw::Modifiers) -> bool {
         let found = self.events.iter().find(|event| {
             if let glfw::WindowEvent::Key(k, _, action, m) = event {
                 if k == &key && m == &modifiers && action == &glfw::Action::Press {
